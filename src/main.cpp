@@ -35,10 +35,9 @@ int main()
   PID pid;
   // TODO: Initialize the pid variable.
 
-  // Call Twiddle Algorithm and get parameter values to set?
-  double Kp = 3;
-  double Kd = 10;
-  double Ki = 0.5;
+  double Kp = 2; // Increasing Kp increases the oscillations of the car because of overshoot
+  double Kd = 5;
+  double Ki = 0.25;
 
   pid.Init(Kp, Ki, Kd);
 
@@ -66,13 +65,19 @@ int main()
           */
 
           steer_value = -pid.Kp * cte - pid.Kd * pid.d_error - pid.Ki * pid.i_error;
+
+          steer_value = steer_value < -1.0 ? -1.0 : ( steer_value > 1.0 ? 1.0 : steer_value);
           
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 
+          // Vehicle stays inside the track at 10mph, at 20mph there are some oscillations.
+          double throttle = 0.1;
+          //throttle = 0.1*(1.-abs(steer_value)) + 0.1;
+
           json msgJson;
           msgJson["steering_angle"] = steer_value;
-          msgJson["throttle"] = 0.3;
+          msgJson["throttle"] = throttle;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);

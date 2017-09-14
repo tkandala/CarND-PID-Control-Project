@@ -1,6 +1,6 @@
 #include "PID.h"
 
-//using namespace std;
+using namespace std;
 
 /*
 * TODO: Complete the PID class.
@@ -19,6 +19,9 @@ void PID::Init(double Kp, double Ki, double Kd) {
   PID::p_error = 0;
   PID::i_error = 0;
 
+  PID::best_error = 0.1;
+  PID::dp = {1,1,1};
+
 }
 
 void PID::UpdateError(double cte) {
@@ -34,4 +37,3 @@ double PID::TotalError() {
   return PID::i_error + PID::p_error + PID::d_error;
 
 }
-
